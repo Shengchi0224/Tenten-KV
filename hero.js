@@ -293,6 +293,10 @@ resizeRenderer();
 //Here is where everything moves
 
 const clock = new THREE.Clock(); 
+// Easing function
+function easeOutQuad(t) {
+  return 1 - (1 - t) * (1 - t);
+}
 function animate() {
   const elapsedTime = clock.getElapsedTime();
 
@@ -365,20 +369,21 @@ function animate() {
 
 animate();
 
-// Function to update the camera's position and rotation
+// Function to update the camera's position and rotation with ease
 function updateCamera() {
   if (currentFrame >= totalFrames) return;
 
   const progress = currentFrame / totalFrames;
+  const easedProgress = easeOutQuad(progress);
 
   // Interpolate camera position using lerp
-  const lerpedPosition = initialCameraPosition.clone().lerp(finalCameraPosition, progress);
+  const lerpedPosition = initialCameraPosition.clone().lerp(finalCameraPosition, easedProgress);
 
   // Interpolate camera rotation manually
   const lerpedRotation = new THREE.Euler(
-    initialCameraRotation.x + (finalCameraRotation.x - initialCameraRotation.x) * progress,
-    initialCameraRotation.y + (finalCameraRotation.y - initialCameraRotation.y) * progress,
-    initialCameraRotation.z + (finalCameraRotation.z - initialCameraRotation.z) * progress
+    initialCameraRotation.x + (finalCameraRotation.x - initialCameraRotation.x) * easedProgress,
+    initialCameraRotation.y + (finalCameraRotation.y - initialCameraRotation.y) * easedProgress,
+    initialCameraRotation.z + (finalCameraRotation.z - initialCameraRotation.z) * easedProgress
   );
 
   camera.position.copy(lerpedPosition);
