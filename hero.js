@@ -1,5 +1,3 @@
-import { spring, styler } from 'https://cdn.skypack.dev/popmotion@9.12.2/lib/index.es.js';
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -10,8 +8,23 @@ const camera = new THREE.PerspectiveCamera(
 
 camera.position.z = 5;
 // Set the initial camera position and rotation
-camera.position.copy(new THREE.Vector3(0, 0, 20));
-camera.rotation.copy(new THREE.Euler(0, 0, 0));
+const initialCameraPosition = new THREE.Vector3(0, 0, 20);
+const initialCameraRotation = new THREE.Euler(0, 0, 0);
+
+camera.position.copy(initialCameraPosition);
+camera.rotation.copy(initialCameraRotation);
+
+// Define the final camera position and rotation
+const finalCameraPosition = new THREE.Vector3(0, 0, 5);
+const finalCameraRotation = new THREE.Euler(0, 0, 0);
+
+// Define animation parameters
+const animationDuration = 2000; // Animation duration in milliseconds
+const framesPerSecond = 60;    // Number of animation frames per second
+
+// Calculate the number of frames
+const totalFrames = (animationDuration / 1000) * framesPerSecond;
+let currentFrame = 0;
 
 const geometry = new THREE.SphereGeometry(10, 512, 512);
 
@@ -351,29 +364,23 @@ function animate() {
 
 animate();
 
-// Function to animate the camera using popmotion's spring
-function animateCameraIn() {
-  const finalCameraPosition = { x: 0, y: 0, z: 5 };
-  const finalCameraRotation = { x: 0, y: 0, z: 0 };
+// Function to update the camera's position and rotation
+function updateCamera() {
+  if (currentFrame >= totalFrames) return;
 
-  const cameraPositionStyler = styler(camera.position);
-  const cameraRotationStyler = styler(camera.rotation);
+  const progress = currentFrame / totalFrames;
 
-  // Use popmotion's spring animation for position and rotation
-  spring({
-    from: cameraPositionStyler.get(),
-    to: finalCameraPosition,
-    stiffness: 200, // Adjust stiffness for desired springiness
-    damping: 10,   // Adjust damping for desired oscillation
-  }).start(cameraPositionStyler.set);
+  // Interpolate camera position and rotation using lerp
+  const lerpedPosition = initialCameraPosition.clone().lerp(finalCameraPosition, progress);
+  const lerpedRotation = initialCameraRotation.clone().lerp(finalCameraRotation, progress);
 
-  spring({
-    from: cameraRotationStyler.get(),
-    to: finalCameraRotation,
-    stiffness: 200,
-    damping: 10,
-  }).start(cameraRotationStyler.set);
+  camera.position.copy(lerpedPosition);
+  camera.rotation.copy(lerpedRotation);
+
+  currentFrame++;
+
+  requestAnimationFrame(updateCamera);
 }
 
-// Call the animateCameraIn function when the page loads
-animateCameraIn();
+// Call the updateCamera function to start the animation
+updateCamera();
