@@ -5,7 +5,10 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   2000
 );
+// Import the popmotion library
+const { spring, styler } = popmotion;
 camera.position.z = 5;
+// Set the initial camera position and rotation
 camera.position.copy(new THREE.Vector3(0, 0, 20));
 camera.rotation.copy(new THREE.Euler(0, 0, 0));
 
@@ -346,22 +349,30 @@ function animate() {
 }
 
 animate();
+
+// Function to animate the camera using popmotion's spring
 function animateCameraIn() {
-  const finalCameraPosition = new THREE.Vector3(0, 0, 5);
-  const finalCameraRotation = new THREE.Euler(0, 0, 0);
+  const finalCameraPosition = { x: 0, y: 0, z: 5 };
+  const finalCameraRotation = { x: 0, y: 0, z: 0 };
 
-  const duration = 2000; // Animation duration in milliseconds
-  const easing = TWEEN.Easing.Exponential.Out; // Easing function
+  const cameraPositionStyler = styler(camera.position);
+  const cameraRotationStyler = styler(camera.rotation);
 
-  const cameraPositionTween = new TWEEN.Tween(camera.position)
-    .to(finalCameraPosition, duration)
-    .easing(easing);
+  // Use popmotion's spring animation for position and rotation
+  spring({
+    from: cameraPositionStyler.get(),
+    to: finalCameraPosition,
+    stiffness: 200, // Adjust stiffness for desired springiness
+    damping: 10,   // Adjust damping for desired oscillation
+  }).start(cameraPositionStyler.set);
 
-  const cameraRotationTween = new TWEEN.Tween(camera.rotation)
-    .to(finalCameraRotation, duration)
-    .easing(easing);
-
-  cameraPositionTween.start();
-  cameraRotationTween.start();
+  spring({
+    from: cameraRotationStyler.get(),
+    to: finalCameraRotation,
+    stiffness: 200,
+    damping: 10,
+  }).start(cameraRotationStyler.set);
 }
+
+// Call the animateCameraIn function when the page loads
 animateCameraIn();
