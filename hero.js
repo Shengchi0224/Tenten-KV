@@ -9,14 +9,14 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.z = 5;
 
 // Set the initial camera position and rotation
-const initialCameraPosition = new THREE.Vector3(0, 0, 20);
+const initialCameraPosition = new THREE.Vector3(0, 0, 5);
 const initialCameraRotation = new THREE.Euler(0, 0, 0);
 
 camera.position.copy(initialCameraPosition);
 camera.rotation.copy(initialCameraRotation);
 
 // Define the final camera position and rotation
-const finalCameraPosition = new THREE.Vector3(0, 0, 5);
+const finalCameraPosition = new THREE.Vector3(0, 0, 20);
 const finalCameraRotation = new THREE.Euler(0, 0, 0);
 
 // Define animation parameters
