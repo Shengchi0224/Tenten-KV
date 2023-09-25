@@ -10,7 +10,7 @@ camera.position.z = 5;
 
 // Set the initial camera position and rotation
 const initialCameraPosition = new THREE.Vector3(0, 0, 5);
-const initialCameraRotation = new THREE.Euler(0, 0, 0);
+const initialCameraRotation = new THREE.Euler(0, 20, 0);
 
 camera.position.copy(initialCameraPosition);
 camera.rotation.copy(initialCameraRotation);
