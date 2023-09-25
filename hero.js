@@ -7,6 +7,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 camera.position.z = 5;
+
 // Set the initial camera position and rotation
 const initialCameraPosition = new THREE.Vector3(0, 0, 20);
 const initialCameraRotation = new THREE.Euler(0, 0, 0);
@@ -370,9 +371,15 @@ function updateCamera() {
 
   const progress = currentFrame / totalFrames;
 
-  // Interpolate camera position and rotation using lerp
+  // Interpolate camera position using lerp
   const lerpedPosition = initialCameraPosition.clone().lerp(finalCameraPosition, progress);
-  const lerpedRotation = initialCameraRotation.clone().lerp(finalCameraRotation, progress);
+
+  // Interpolate camera rotation manually
+  const lerpedRotation = new THREE.Euler(
+    initialCameraRotation.x + (finalCameraRotation.x - initialCameraRotation.x) * progress,
+    initialCameraRotation.y + (finalCameraRotation.y - initialCameraRotation.y) * progress,
+    initialCameraRotation.z + (finalCameraRotation.z - initialCameraRotation.z) * progress
+  );
 
   camera.position.copy(lerpedPosition);
   camera.rotation.copy(lerpedRotation);
