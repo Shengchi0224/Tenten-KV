@@ -1,3 +1,5 @@
+import { spring, styler } from 'https://cdn.skypack.dev/popmotion@9.12.2/lib/index.es.js';
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -5,8 +7,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   2000
 );
-// Import the popmotion library
-const { spring, styler } = popmotion;
+
 camera.position.z = 5;
 // Set the initial camera position and rotation
 camera.position.copy(new THREE.Vector3(0, 0, 20));
