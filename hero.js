@@ -19,7 +19,7 @@ camera.rotation.copy(initialCameraRotation);
 const finalCameraPosition = new THREE.Vector3(0, 0, 20);
 const finalCameraRotation = new THREE.Euler(0, 0, 0);
 
-const animationDuration = 50; // Duration in seconds
+const animationDuration = 20; // Duration in seconds
 const framesPerSecond = 60; // Number of animation frames per second
 
 // Spring parameters
@@ -379,8 +379,8 @@ function updateCamera() {
 
   // Apply a custom spring-like ease
   const t = progress;
-  const deltaT = 1 / framesPerSecond;
-  const omega = 3 * Math.PI * stiffness;
+  const deltaT = 2 / framesPerSecond;
+  const omega = 5 * Math.PI * stiffness;
   const zeta = damping / (2 * Math.sqrt(stiffness));
   const expTerm = Math.exp(-zeta * omega * t);
   const cosTerm = Math.cos(omega * Math.sqrt(1 - zeta * zeta) * t);
