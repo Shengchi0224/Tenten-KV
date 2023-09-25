@@ -19,10 +19,13 @@ camera.rotation.copy(initialCameraRotation);
 const finalCameraPosition = new THREE.Vector3(0, 0, 20);
 const finalCameraRotation = new THREE.Euler(0, 0, 0);
 
-// Define animation parameters
-const animationDuration = 800; // Animation duration in milliseconds
-const framesPerSecond = 60;    // Number of animation frames per second
+const animationDuration = 0.3; // Duration in seconds
+const framesPerSecond = 60; // Number of animation frames per second
 
+// Spring parameters
+const damping = 5;
+const stiffness = 100;
+const restDelta = 0.001;
 
 // Easing function
 function easeOutQuad(t) {
@@ -30,7 +33,7 @@ function easeOutQuad(t) {
 }
 
 // Calculate the number of frames
-const totalFrames = (animationDuration / 1000) * framesPerSecond;
+const totalFrames = animationDuration * framesPerSecond;
 let currentFrame = 0;
 
 const geometry = new THREE.SphereGeometry(10, 512, 512);
@@ -372,30 +375,25 @@ function animate() {
 
 animate();
 
-// Function to update the camera's position and rotation with ease
+// Function to update the camera's position with spring-like ease
 function updateCamera() {
   if (currentFrame >= totalFrames) return;
 
   const progress = currentFrame / totalFrames;
-  const easedProgress = easeOutQuad(progress);
 
-  // Adjust the interpolation factor for faster zoom-in
-  const interpolationFactor = 1.0 - easedProgress;
+  // Apply a custom spring-like ease
+  const t = progress;
+  const deltaT = 1 / framesPerSecond;
+  const omega = 2 * Math.PI * stiffness;
+  const zeta = damping / (2 * Math.sqrt(stiffness));
+  const expTerm = Math.exp(-zeta * omega * t);
+  const cosTerm = Math.cos(omega * Math.sqrt(1 - zeta * zeta) * t);
+  const positionFactor = expTerm * (cosTerm + (zeta / Math.sqrt(1 - zeta * zeta)) * Math.sin(omega * Math.sqrt(1 - zeta * zeta) * t));
 
-  // Interpolate camera position using lerp
-  const lerpedPosition = initialCameraPosition
-    .clone()
-    .lerp(finalCameraPosition, interpolationFactor);
-
-  // Interpolate camera rotation manually
-  const lerpedRotation = new THREE.Euler(
-    initialCameraRotation.x + (finalCameraRotation.x - initialCameraRotation.x) * interpolationFactor,
-    initialCameraRotation.y + (finalCameraRotation.y - initialCameraRotation.y) * interpolationFactor,
-    initialCameraRotation.z + (finalCameraRotation.z - initialCameraRotation.z) * interpolationFactor
-  );
+  // Interpolate camera position using lerp with the spring-like ease
+  const lerpedPosition = new THREE.Vector3().lerpVectors(initialCameraPosition, finalCameraPosition, positionFactor);
 
   camera.position.copy(lerpedPosition);
-  camera.rotation.copy(lerpedRotation);
 
   currentFrame++;
 
