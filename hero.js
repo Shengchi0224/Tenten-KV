@@ -23,6 +23,12 @@ const finalCameraRotation = new THREE.Euler(0, 0, 0);
 const animationDuration = 800; // Animation duration in milliseconds
 const framesPerSecond = 60;    // Number of animation frames per second
 
+
+// Easing function
+function easeOutQuad(t) {
+  return 1 - (1 - t) * (1 - t);
+}
+
 // Calculate the number of frames
 const totalFrames = (animationDuration / 1000) * framesPerSecond;
 let currentFrame = 0;
@@ -293,10 +299,7 @@ resizeRenderer();
 //Here is where everything moves
 
 const clock = new THREE.Clock(); 
-// Easing function
-function easeOutQuad(t) {
-  return 1 - (1 - t) * (1 - t);
-}
+
 function animate() {
   const elapsedTime = clock.getElapsedTime();
 
@@ -376,14 +379,19 @@ function updateCamera() {
   const progress = currentFrame / totalFrames;
   const easedProgress = easeOutQuad(progress);
 
+  // Adjust the interpolation factor for faster zoom-in
+  const interpolationFactor = 1.0 - easedProgress;
+
   // Interpolate camera position using lerp
-  const lerpedPosition = initialCameraPosition.clone().lerp(finalCameraPosition, easedProgress);
+  const lerpedPosition = initialCameraPosition
+    .clone()
+    .lerp(finalCameraPosition, interpolationFactor);
 
   // Interpolate camera rotation manually
   const lerpedRotation = new THREE.Euler(
-    initialCameraRotation.x + (finalCameraRotation.x - initialCameraRotation.x) * easedProgress,
-    initialCameraRotation.y + (finalCameraRotation.y - initialCameraRotation.y) * easedProgress,
-    initialCameraRotation.z + (finalCameraRotation.z - initialCameraRotation.z) * easedProgress
+    initialCameraRotation.x + (finalCameraRotation.x - initialCameraRotation.x) * interpolationFactor,
+    initialCameraRotation.y + (finalCameraRotation.y - initialCameraRotation.y) * interpolationFactor,
+    initialCameraRotation.z + (finalCameraRotation.z - initialCameraRotation.z) * interpolationFactor
   );
 
   camera.position.copy(lerpedPosition);
