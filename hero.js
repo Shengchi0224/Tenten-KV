@@ -20,7 +20,7 @@ const finalCameraPosition = new THREE.Vector3(0, 0, 5);
 const finalCameraRotation = new THREE.Euler(0, 0, 0);
 
 // Define animation parameters
-const animationDuration = 2000; // Animation duration in milliseconds
+const animationDuration = 800; // Animation duration in milliseconds
 const framesPerSecond = 60;    // Number of animation frames per second
 
 // Calculate the number of frames
